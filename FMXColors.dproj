@@ -401,7 +401,6 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\Components\HGM.Utils.Color.pas"/>
-        <DCCReference Include="FMXColors.Screenshot.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

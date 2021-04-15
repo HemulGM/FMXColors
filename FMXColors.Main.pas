@@ -120,8 +120,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure EditHSV_HValidating(Sender: TObject; var Text: string);
     procedure PaintBoxMagnifyPaint(Sender: TObject; Canvas: TCanvas);
-    procedure ListBoxPinsViewportPositionChange(Sender: TObject; const OldViewportPosition, NewViewportPosition: TPointF;
-      const ContentSizeChanged: Boolean);
+    procedure ListBoxPinsViewportPositionChange(Sender: TObject; const OldViewportPosition, NewViewportPosition: TPointF; const ContentSizeChanged: Boolean);
     procedure FormDestroy(Sender: TObject);
   private
     FDataColor: TAlphaColor;
@@ -143,7 +142,7 @@ var
 implementation
 
 uses
-  System.Math, HGM.Utils.Color, FMXColors.Screenshot, System.UIConsts;
+  System.Math, HGM.Utils.Color, HGM.Screenshot, System.UIConsts;
 
 {$R *.fmx}
 
@@ -161,12 +160,19 @@ function TFormMain.GetPixelUnderCursor: TColor;
 var
   DC: HDC;
   Cur: TPoint;
+  Stream: TMemoryStream;
 begin
   DC := GetDC(0);
   GetCursorPos(Cur);
   FMagnifyPoint := Cur;
   Result := GetPixel(DC, Cur.X, Cur.Y);
-  TakeScreenshot(FMagnify);
+  Stream := TMemoryStream.Create;
+  try
+    TakeScreenshot(Stream);
+  finally
+    FMagnify.LoadFromStream(Stream);
+    Stream.Free;
+  end;
   FMgEmpty := False;
   PaintBoxMagnify.Repaint;
 end;
@@ -229,8 +235,7 @@ begin
   ColorQuad.Hue := HueTrackBar.Value;
 end;
 
-procedure TFormMain.ListBoxPinsViewportPositionChange(Sender: TObject; const OldViewportPosition, NewViewportPosition:
-  TPointF; const ContentSizeChanged: Boolean);
+procedure TFormMain.ListBoxPinsViewportPositionChange(Sender: TObject; const OldViewportPosition, NewViewportPosition: TPointF; const ContentSizeChanged: Boolean);
 var
   i: Integer;
 begin
